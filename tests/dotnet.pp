@@ -17,7 +17,7 @@ node default {
   windowsfeature{'Web-Mgmt-Console': }
 
   # Include .Net module
-  $dotnet_modules = $facts['operatingsystemrelease'] ? {
+  $dotnet_modules = $facts['os']['release']['full'] ? {
     /2008/  => ['Web-Asp-Net'],
     default => ['Web-Asp-Net','Web-Asp-Net45'],
   }

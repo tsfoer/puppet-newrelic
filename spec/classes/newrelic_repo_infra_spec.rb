@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe 'newrelic::repo::infra', :type => :class do
-  
+
   context 'OS Family => RedHat' do
-    let(:facts) do 
+    let(:facts) do
       {
         'os' => {
             'family' => 'RedHat',
-        
+
         }
      }
      end
@@ -22,12 +22,14 @@ describe 'newrelic::repo::infra', :type => :class do
         'os' => {
             'family'  => 'Debian',
             'name'    => 'Debian',
+            'distro'  => {
+              'codename' => 'wheezy'
+            },
             'release' => {
               'full' => '7.0'
             }
         },
         'osfamily' => 'Debian',
-        'lsbdistcodename' => 'wheezy'
      }
      end
 
@@ -38,4 +40,3 @@ describe 'newrelic::repo::infra', :type => :class do
 
 
 end
-

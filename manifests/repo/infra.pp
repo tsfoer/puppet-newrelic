@@ -13,7 +13,7 @@
 class newrelic::repo::infra {
 
   case $facts['os']['family'] {
-    'RedHat' : {
+    'RedHat': {
       $require = Yumrepo['newrelic-infra']
       yumrepo { 'newrelic-infra':
         ensure        => 'present',
@@ -25,12 +25,20 @@ class newrelic::repo::infra {
       }
     }
 
-    'Debian' : {
+    'Debian': {
+
+      case $facts['os']['name'] {
+        'Ubuntu': {
+          $release = $facts['os']['lsb']['distcodename']
+        }
+
+        default: {
+          $release = $facts['os']['distro']['codename']
+        }
+      }
 
       $require = Apt::Source['newrelic-infra']
-
       ensure_packages('apt-transport-https')
-
       ::apt::source { 'newrelic-infra':
         location => 'https://download.newrelic.com/infrastructure_agent/linux/apt',
         repos    => 'main',
@@ -41,7 +49,7 @@ class newrelic::repo::infra {
         include  => {
           src => false,
         },
-        release  => $facts['lsbdistcodename'],
+        release  => $release,
         require  => Package['apt-transport-https'],
       }
     }
