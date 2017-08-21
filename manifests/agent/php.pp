@@ -122,13 +122,6 @@ class newrelic::agent::php (
     }
   }
 
-  file { '/etc/newrelic/newrelic.cfg':
-    ensure  => $daemon_config_ensure,
-    path    => '/etc/newrelic/newrelic.cfg',
-    content => template('newrelic/daemon/newrelic.cfg.erb'),
-    require => Package[$all_packages],
-  }
-
   exec { 'newrelic install':
     command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
     user    => 'root',
@@ -139,6 +132,13 @@ class newrelic::agent::php (
   file { "${conf_dir}/newrelic.ini":
     ensure  => file,
     content => template('newrelic/php/newrelic.ini.erb'),
+    require => Exec['newrelic install'],
+  }
+
+  file { '/etc/newrelic/newrelic.cfg':
+    ensure  => $daemon_config_ensure,
+    path    => '/etc/newrelic/newrelic.cfg',
+    content => template('newrelic/daemon/newrelic.cfg.erb'),
     require => Exec['newrelic install'],
   }
 
