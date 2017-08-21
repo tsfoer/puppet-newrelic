@@ -8,6 +8,7 @@ describe 'newrelic::agent::php', :type => :class do
 
       },
       'operatingsystem' => 'Centos',
+      'path' => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin:/root/.local/bin:/root/bin'
    }
   end
 
