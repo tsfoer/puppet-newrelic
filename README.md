@@ -1,85 +1,111 @@
-Newrelic Module for Puppet
-==========================
-[![Build Status](https://secure.travis-ci.org/claranet/puppet-newrelic.png)](http://travis-ci.org/claranet/puppet-newrelic)
+# puppet-newrelic
 
-This module manages and installs the New Relic Server Monitoring and PHP agents and is based on Felipe Salum's [puppet-newrelic](https://github.com/fsalum/puppet-newrelic) module. The
-code has been heavly refactored and support for Puppet 4 and 5 added. 
+[![Build Status](https://secure.travis-ci.org/claranet/puppet-newrelic.png?branch=master)](http://travis-ci.org/claranet/puppet-newrelic)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/Claranet/newrelic.svg)](https://forge.puppetlabs.com/Claranet/newrelic)
 
-Supported systems: Debian and RHEL osfamily Linux.
+## Table of Contents
 
-Operating System
-----------------
+1. [Overview - What is the puppet-newrelic module?](#overview)
+1. [Module Description - What does the module do?](#module-description)
+1. [Setup - The basics of getting started with puppet-newrelic](#setup)
+    * [What puppet-newrelic affects](#what-puppet-newrelic-affects)
+    * [Beginning with puppet-newrelic](#beginning-with-registry)
+1. [Usage - Configuration options and additional functionality](#usage)
+1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Development - Guide for contributing to the module](#development)
 
-Tested on CentOS, Debian, Ubuntu and Windows.
+## Overview
 
-Windows support added/tested/supported by [malaikah](https://github.com/malaikah).
+This module manages and installs the New Relic Server Monitoring and PHP agents and is based on Felipe Salum's [puppet-newrelic](https://github.com/fsalum/puppet-newrelic) module.
 
-IMPORTANT
----------
+### Puppet 3 Support
 
-Review all the parameters you use before deploying this module in production.
+On 31st December 2016, support for Puppet 3.x was withdrawn. As as a result, **this module does not support Puppet 3**.
 
-Quick Start
------------
+## Module Description
 
-To install the Newrelic Server Monitoring and the PHP agent packages, include the following in your manifest file:
+## Setup
 
-    node default {
-         class {'newrelic::server::linux':
-           newrelic_license_key => 'your license key here',
-         }
+### What puppet-newrelic affects
 
-         class {'newrelic::agent::php':
-           newrelic_license_key  => 'your license key here',
-           newrelic_ini_appname  => 'Your PHP Application',
-         }
+  * Adds the upstream NewRelic Yum/Apt repositories
+  * Installs the NewRelic Server/Infrastructure agent and also the PHP or .NET agents
+
+### Beginning with puppet-newrelic
+
+By default, the module installs and configures the [NewRelic Infrastructure agent](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/installation/install-infrastructure-linux).
+
+## Usage
+
+To install the (deprecated) NewRelic Server Monitoring agent instead of the default NewRelic Infrastructure agent:
+
+    class { '::newrelic':
+      license_key   => 'your key here',
+      enable_infra  => false,
+      enable_server => true,
     }
 
-To do the same for a Windows .Net host, include the following:
+To enable the PHP agent with default configuration:
 
-    node default {
-         class {'newrelic::server::windows':
-           newrelic_license_key => 'your license key here',
-         }
-
-         class {'newrelic::agent::dotnet':
-           newrelic_license_key  => 'your license key here',
-         }
+    class { '::newrelic':
+      license_key      => 'your key here',
+      enable_php_agent => true,
     }
 
-(Note that, while it is possible to specify a version of the .Net agent, caution should be excercised if doing this. Newrelic make only the last two releases available on http://download.newrelic.com/dot_net_agent/release/.)
+Further PHP agent configuration in Hiera:
 
-If you use Ubuntu 14.04 and php5-fpm you can pass an array of directories for PHP ini files:
+     newrelic::agent::php::ini_settings:
+       appname: 'ACME PHP Application'
+       daemon.loglevel: 'error'
 
-         class {'newrelic::agent::php':
-           newrelic_license_key  => 'your license key here',
-           newrelic_ini_appname  => 'Your PHP Application',
-           newrelic_php_conf_dir => ['/etc/php5/mods-available/conf.d','/etc/php5/fpm/conf.d'],
-         }
+### Advanced Usage Examples
 
-Parameters
-----------
+The below examples show how to integrate the NewRelic PHP agent with the most common web-servers, with automatic service restarts.
 
-There are a lot of parameters you can customize, check the `.pp` files and the [New Relic documentation](https://docs.newrelic.com/docs/php/php-agent-phpini-settings) to understand them.
+#### Apache and `mod_php`
 
-Mandatory parameters:
+Assumes usage of the [Puppet Apache module](https://github.com/puppetlabs/puppetlabs-apache).
 
-* newrelic_license_key
+    class { '::apache': }
+    class { '::apache::mod::php': }
 
-Copyright and License
----------------------
+    class { '::newrelic::agent::php':
+      license_key  => 'your key',
+      require      => Class['::apache::mod::php'],
+      notify       => Service['httpd'],
+    }
 
-Copyright (C) 2014 Felipe Salum
-Copyright (C) 2017 Claranet
+#### PHP-FPM
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Assumes usage of the [Slashbunny PHP-FPM module](https://github.com/Slashbunny/puppet-phpfpm).
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    class { '::phpfpm':
+        poold_purge => true,
+    }
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+    ::phpfpm::pool { 'main': }
+
+    class { '::newrelic::agent::php':
+      license_key  => '3522b44f4c3f89c8566d5781bac6e0bb7dedab7z',
+      require      => Class['::phpfpm'],
+      notify       => Class['::phpfpm::service'],
+    }
+
+## Limitations
+
+* When moving from NewRelic Server to NewRelic Infrastructure - the module only installs the new client, and does not clean up the old one
+
+### Windows Support
+
+Please note that Windows support is currently **untested**.
+
+### Supported Operating Systems
+
+* Debian/Ubuntu
+* CentOS/RHEL
+
+## Development
+
+* Copyright (C) 2012 Felipe Salum <fsalum@gmail.com>
+* Copyright (C) 2017 Claranet
+* Distributed under the terms of the Apache License v2.0 - see LICENSE file for details.
