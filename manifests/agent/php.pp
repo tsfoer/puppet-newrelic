@@ -116,13 +116,6 @@ class newrelic::agent::php (
 
   # == Configuration
 
-  if $startup_mode == 'external' {
-    File['/etc/newrelic/newrelic.cfg']{
-      before  => Service[$service_name],
-      notify  => Service[$service_name],
-    }
-  }
-
   exec { 'newrelic install':
     command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
     path    => $exec_path,
@@ -149,14 +142,20 @@ class newrelic::agent::php (
     require => Exec['newrelic install']
   }
 
-  # == Service
+  # == Service only managed in external startup mode
 
   if $startup_mode == 'external' {
+
+    File['/etc/newrelic/newrelic.cfg']{
+      notify  => Service[$service_name],
+    }
+
     service { $service_name:
       ensure     => $service_ensure,
       enable     => $service_enable,
       hasrestart => true,
       hasstatus  => true,
+      require    => File['/etc/newrelic/newrelic.cfg'],
     }
   }
 
