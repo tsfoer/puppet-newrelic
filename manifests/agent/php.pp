@@ -79,6 +79,7 @@ class newrelic::agent::php (
   String                   $license_key,
   Boolean                  $manage_repo      = $::newrelic::params::manage_repo,
   String                   $conf_dir         = $::newrelic::params::php_conf_dir,
+  String                   $exec_path        = $facts['path'],
   Array                    $purge_files      = $::newrelic::params::php_purge_files,
   String                   $package_name     = $::newrelic::params::php_package_name,
   String                   $service_name     = $::newrelic::params::php_service_name,
@@ -124,6 +125,7 @@ class newrelic::agent::php (
 
   exec { 'newrelic install':
     command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
+    path    => $exec_path,
     user    => 'root',
     unless  => "/bin/grep -q ${license_key} ${conf_dir}/newrelic.ini",
     require => Package[$all_packages],
