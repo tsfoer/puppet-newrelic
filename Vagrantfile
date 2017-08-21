@@ -40,7 +40,6 @@ end
 
 Vagrant.configure("2") do |config|
 
-  ssh_base_port =
   local_username ||= `whoami`.strip
 
   # = Actually do some work
