@@ -77,26 +77,31 @@
 #
 class newrelic::agent::php (
   String                   $license_key,
-  Boolean                  $manage_repo        = $::newrelic::params::manage_repo,
-  String                   $conf_dir           = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files        = $::newrelic::params::php_purge_files,
-  String                   $package_name       = $::newrelic::params::php_package_name,
-  String                   $service_name       = $::newrelic::params::php_service_name,
-  Array                    $extra_packages     = $::newrelic::params::php_extra_packages,
-  Hash                     $extra_ini_settings = $::newrelic::params::php_default_ini_settings,
-  String                   $exec_path          = $facts['path'],
-  String                   $service_ensure     = 'running',
-  Boolean                  $service_enable     = true,
-  String                   $package_ensure     = 'present',
-  Enum['agent','external'] $startup_mode       = 'agent',
-  Hash                     $ini_settings       = {},
-  Hash                     $daemon_settings    = {},
+  Boolean                  $manage_repo         = $::newrelic::params::manage_repo,
+  String                   $conf_dir            = $::newrelic::params::php_conf_dir,
+  Array                    $purge_files         = $::newrelic::params::php_purge_files,
+  String                   $package_name        = $::newrelic::params::php_package_name,
+  String                   $daemon_service_name = $::newrelic::params::php_service_name,
+  Array                    $extra_packages      = $::newrelic::params::php_extra_packages,
+  Hash                     $extra_ini_settings  = $::newrelic::params::php_default_ini_settings,
+  String                   $exec_path           = $facts['path'],
+  String                   $package_ensure      = 'present',
+  Enum['agent','external'] $startup_mode        = 'agent',
+  Hash                     $ini_settings        = {},
+  Hash                     $daemon_settings     = {},
 ) inherits newrelic::params {
 
   if $startup_mode == 'agent' {
     $daemon_config_ensure = absent
+    $daemon_service_ensure = 'stopped'
+    $daemon_service_enable = false
   } else {
     $daemon_config_ensure = file
+    $daemon_service_ensure = 'running'
+    $daemon_service_enable = true
+    File['/etc/newrelic/newrelic.cfg']{
+      notify  => Service[$service_name],
+    }
   }
 
   # == Installation
@@ -147,19 +152,12 @@ class newrelic::agent::php (
 
   # == Service only managed in external startup mode
 
-  if $startup_mode == 'external' {
-
-    File['/etc/newrelic/newrelic.cfg']{
-      notify  => Service[$service_name],
-    }
-
-    service { $service_name:
-      ensure     => $service_ensure,
-      enable     => $service_enable,
-      hasrestart => true,
-      hasstatus  => true,
-      require    => File['/etc/newrelic/newrelic.cfg'],
-    }
+  service { $daemon_service_name:
+    ensure     => $daemon_service_ensure,
+    enable     => $daemon_service_enable,
+    hasrestart => true,
+    hasstatus  => true,
+    require    => File['/etc/newrelic/newrelic.cfg'],
   }
 
 }
