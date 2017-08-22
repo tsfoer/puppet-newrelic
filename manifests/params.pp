@@ -30,6 +30,8 @@ class newrelic::params {
       $php_extra_packages  = ['php-cli']
 
       if $facts['os']['release']['major'] == '7' {
+        # Abstract socket
+        # - https://discuss.newrelic.com/t/apm-not-showing-data-php-5-6-centos-7-apache-httpd-2-4/30756/5
         $php_default_ini_settings = {
           'daemon.port' => '"@newrelic-daemon"'
         }
