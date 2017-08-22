@@ -4,19 +4,23 @@ describe 'newrelic::server::linux', :type => :class do
   let(:facts) do
     {
       'os' => {
-          'family' => 'RedHat',
-
+        'family'  => 'RedHat',
+        'name'    => 'CentOS',
+        'release' => {
+          'major' => '7'
+        }
       }
    }
   end
 
-  let(:params) do 
+  let(:params) do
     {
     :license_key => '1234567890qwerty',
     }
   end
 
   it { is_expected.to compile }
+  it { should contain_class('newrelic::repo::legacy') }
   it { should contain_service('newrelic-sysmond') }
   it { should contain_package('newrelic-sysmond') }
   it { should contain_file('/var/log/newrelic') }
@@ -33,4 +37,3 @@ describe 'newrelic::server::linux', :type => :class do
 
 
 end
-

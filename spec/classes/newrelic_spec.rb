@@ -1,11 +1,14 @@
 require 'spec_helper'
 
 describe 'newrelic', :type => :class do
-  let(:facts) do 
+  let(:facts) do
     {
       'os' => {
-          'family' => 'RedHat',
-        
+        'family'  => 'RedHat',
+        'name'    => 'CentOS',
+        'release' => {
+          'major' => '7'
+        }
       }
    }
   end

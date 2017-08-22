@@ -8,6 +8,6 @@ extension=newrelic.so
 [newrelic]
 
 newrelic.license=<%= scope['::newrelic::agent::php::license_key'] %>
-<% scope['::newrelic::agent::php::ini_settings'].each do |k,v| -%>
+<% scope['::newrelic::agent::php::all_ini_settings'].each do |k,v| -%>
 newrelic.<%= k %>=<%= v %>
 <%- end -%>

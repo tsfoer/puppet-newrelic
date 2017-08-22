@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 describe 'newrelic::repo::legacy', :type => :class do
-  
+
   context 'OS Family => Redhat' do
-    let(:facts) do 
+    let(:facts) do
       {
         'os' => {
-            'family' => 'RedHat', 
+          'family'  => 'RedHat',
+          'name'    => 'CentOS',
+          'release' => {
+            'major' => '7'
+          }
         }
       }
     end
@@ -17,22 +21,21 @@ describe 'newrelic::repo::legacy', :type => :class do
 
   context 'OS Family => Debian' do
     let(:facts) do
-      { 
-        'os' => { 
+      {
+        'os' => {
             'family'  => 'Debian',
             'name'    => 'Debian',
-            'release' => { 
+            'release' => {
               'full' => '7.0'
             }
         },
         'osfamily' => 'Debian',
         'lsbdistcodename' => 'wheezy'
-     } 
+     }
      end
 
-    it { is_expected.to compile } 
-    it { should contain_apt__source('newrelic') } 
+    it { is_expected.to compile }
+    it { should contain_apt__source('newrelic') }
   end
 
 end
-

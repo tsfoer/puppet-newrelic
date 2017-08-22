@@ -4,15 +4,18 @@ describe 'newrelic::agent::php', :type => :class do
     let(:facts) do
     {
       'os' => {
-          'family' => 'RedHat',
-
+        'family'  => 'RedHat',
+        'name'    => 'CentOS',
+        'release' => {
+          'major' => '7'
+        }
       },
       'operatingsystem' => 'Centos',
       'path' => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/opt/puppetlabs/bin:/opt/puppetlabs/puppet/bin:/root/.local/bin:/root/bin'
    }
   end
 
-  let(:params) do 
+  let(:params) do
     {
     :license_key => '1234567890qwerty',
     :conf_dir => '/opt/rh/php54/root/etc/php.d',
@@ -21,6 +24,7 @@ describe 'newrelic::agent::php', :type => :class do
 
   it { is_expected.to compile }
   it { should contain_class('newrelic::params') }
+  it { should contain_class('newrelic::repo::legacy') }
   it { should contain_package('newrelic-php5') }
   it { should contain_package('php-cli') }
   it { should contain_file('/etc/newrelic/newrelic.cfg') }

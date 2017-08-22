@@ -6,8 +6,11 @@ describe 'newrelic::repo::infra', :type => :class do
     let(:facts) do
       {
         'os' => {
-            'family' => 'RedHat',
-
+          'family'  => 'RedHat',
+          'name'    => 'CentOS',
+          'release' => {
+            'major' => '7'
+          }
         }
      }
      end
