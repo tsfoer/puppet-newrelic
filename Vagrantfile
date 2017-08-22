@@ -21,7 +21,7 @@ BOXES = [
 MODULES = [
   # Module dependencies
   { name: "puppet-download_file", version: "1.2.1" },
-  { name: "puppetlabs-stdlib", version: "4.18.0" },
+  { name: "puppetlabs-stdlib" },
   { name: "puppetlabs-apt", version: "4.1.0" },
   # Test dependencies
   { name: "Slashbunny-phpfpm", version: "0.0.13" },
@@ -101,7 +101,12 @@ Vagrant.configure("2") do |config|
       # == Install modules
       MODULES.each do |mod|
         if mod[:git].nil?
-          c.vm.provision :shell, :inline => "/opt/puppetlabs/bin/puppet module install #{mod[:name]} --version #{mod[:version]}"
+          if mod[:version].nil?
+            mod_version = ''
+          else
+            mod_version = " --version #{mod[:version]}"
+          end
+          c.vm.provision :shell, :inline => "/opt/puppetlabs/bin/puppet module install #{mod[:name]}#{mod_version}"
         else
           mod_name = mod[:name].split('-').last
           c.vm.provision :shell, :inline => "if [ ! -d /etc/puppetlabs/code/environments/production/modules/#{mod_name} ]; then git clone #{mod[:git]} /etc/puppetlabs/code/environments/production/modules/#{mod_name}; fi"
