@@ -120,7 +120,7 @@ class newrelic::agent::php (
     $daemon_service_ensure = 'running'
     $daemon_service_enable = true
     File['/etc/newrelic/newrelic.cfg']{
-      notify  => Service[$service_name],
+      notify  => Service[$daemon_service_name],
     }
   }
 

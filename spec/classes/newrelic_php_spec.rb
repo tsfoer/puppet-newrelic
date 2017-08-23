@@ -30,6 +30,7 @@ describe 'newrelic::agent::php', :type => :class do
   it { should contain_file('/etc/newrelic/newrelic.cfg') }
   it { should contain_file('/opt/rh/php54/root/etc/php.d/newrelic.ini') }
   it { should contain_exec('newrelic install') }
+  it { should contain_exec('newrelic_kill') }
 
 
   context 'startup_mode => external' do

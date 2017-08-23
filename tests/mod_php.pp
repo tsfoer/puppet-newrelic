@@ -17,7 +17,7 @@ node default {
     ini_settings => {
       'appname'     => "Test Application: ${facts[networking][hostname]}",
       'daemon.port' => '60666',
-     },
+    },
   }
 
   # == phpinfo() page
