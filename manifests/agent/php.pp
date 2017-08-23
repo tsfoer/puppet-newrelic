@@ -25,7 +25,7 @@
 #   Name of the package to install
 #   Default: OS dependant - see params.pp (String)
 #
-# [*service_name*]
+# [*daemon_service_name*]
 #   Name of the service running the PHP agent
 #   Default: OS dependant - see params.pp (String)
 #
@@ -35,6 +35,18 @@
 #   required php-cli package, so the installer fails to find any PHP
 #   installations.
 #   Default: OS dependant - see params.pp (Array)
+#
+# [*default_ini_settings*]
+#   Default settings to pass to newrelic.ini - these are used to make
+#   OS-specific changes to the newrelic.ini file, for example using Abstract
+#   Sockets in RedHat 7. Can be overridden using the ini_settings parameter.
+#   Default: OS dependant - see params.pp (Hash)
+#
+# [*exec_path*]
+#   $PATH environment variable to pass to exec resources within this class,
+#   most noteably the NewRelic installer script. You may wish to override this
+#   setting if you are using non-default PHP installations such as RedHat SCL.
+#   Default: OS dependant - 'path' fact (String)
 #
 # [*package_ensure*]
 #   Specific the Newrelic PHP package update state.
@@ -47,10 +59,18 @@
 #   Default: 'agent' (String)
 #
 # [*ini_settings*]
-#   Key/Value hash of settings to add to newrelic.ini files within $conf_dir,
+#   Key/Value hash of settings to add to the newrelic.ini file within $conf_dir,
 #   see below example. NOTE that all settings are added to the [newrelic]
 #   section with the "newrelic." prefix. For more info on possible parameters,
 #   see: https://docs.newrelic.com/docs/php/php-agent-phpini-settings
+#   Default: {} (Hash)
+#
+# [*daemon_settings*]
+#   Key/Value hash of settings to add to the /etc/newrelic/newrelic.cfg file
+#   which configures the newrelic-daemon service when in 'external' startup
+#   mode. In contrast to $ini_settings above, parameters are added as-is.
+#   For more info on possible parameters, see:
+#   https://docs.newrelic.com/docs/php/php-agent-phpini-settings
 #   Default: {} (Hash)
 #
 # === Examples
@@ -77,18 +97,18 @@
 #
 class newrelic::agent::php (
   String                   $license_key,
-  Boolean                  $manage_repo         = $::newrelic::params::manage_repo,
-  String                   $conf_dir            = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files         = $::newrelic::params::php_purge_files,
-  String                   $package_name        = $::newrelic::params::php_package_name,
-  String                   $daemon_service_name = $::newrelic::params::php_service_name,
-  Array                    $extra_packages      = $::newrelic::params::php_extra_packages,
-  Hash                     $extra_ini_settings  = $::newrelic::params::php_default_ini_settings,
-  String                   $exec_path           = $facts['path'],
-  String                   $package_ensure      = 'present',
-  Enum['agent','external'] $startup_mode        = 'agent',
-  Hash                     $ini_settings        = {},
-  Hash                     $daemon_settings     = {},
+  Boolean                  $manage_repo          = $::newrelic::params::manage_repo,
+  String                   $conf_dir             = $::newrelic::params::php_conf_dir,
+  Array                    $purge_files          = $::newrelic::params::php_purge_files,
+  String                   $package_name         = $::newrelic::params::php_package_name,
+  String                   $daemon_service_name  = $::newrelic::params::php_service_name,
+  Array                    $extra_packages       = $::newrelic::params::php_extra_packages,
+  Hash                     $default_ini_settings = $::newrelic::params::php_default_ini_settings,
+  String                   $exec_path            = $facts['path'],
+  String                   $package_ensure       = 'present',
+  Enum['agent','external'] $startup_mode         = 'agent',
+  Hash                     $ini_settings         = {},
+  Hash                     $daemon_settings      = {},
 ) inherits newrelic::params {
 
   if $startup_mode == 'agent' {
@@ -104,50 +124,61 @@ class newrelic::agent::php (
     }
   }
 
-  # == Installation
+  # == Package Installation
 
   if $manage_repo == true {
     include ::newrelic::repo::legacy
-    Package[$package_name] {
-      require => $::newrelic::repo::legacy::require
-    }
+    $package_require = [$::newrelic::repo::legacy::require,Package[$extra_packages]]
+  } else {
+    $package_require = Package[$extra_packages]
   }
 
-  $all_packages = concat($extra_packages,[$package_name])
   ensure_packages($extra_packages)
 
   package { $package_name:
     ensure  => $package_ensure,
+    notify  => Exec['newrelic_kill'],
+    require => $package_require,
   }
 
-  # == Configuration
+  # == Initial Installation
 
   exec { 'newrelic install':
     command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
     path    => $exec_path,
     user    => 'root',
     unless  => "/bin/grep -q ${license_key} ${conf_dir}/newrelic.ini",
-    require => Package[$all_packages],
+    notify  => Exec['newrelic_kill'],
+    require => Package[$package_name],
   }
 
-  $all_ini_settings = deep_merge($extra_ini_settings,$ini_settings)
+  exec { 'newrelic_kill':
+    command     => 'pkill newrelic-daemon',
+    onlyif      => 'ps -ef | grep -q [n]ewrelic-daemon',
+    path        => $facts['path'],
+    refreshonly => true,
+  }
+
+  # == Configuration
+
+  file { $purge_files:
+    ensure  => absent,
+    require => Exec['newrelic install']
+  }
+
+  $all_ini_settings = deep_merge($default_ini_settings,$ini_settings)
 
   file { "${conf_dir}/newrelic.ini":
     ensure  => file,
     content => template('newrelic/php/newrelic.ini.erb'),
-    require => Exec['newrelic install'],
+    require => Exec['newrelic_kill'],
   }
 
   file { '/etc/newrelic/newrelic.cfg':
     ensure  => $daemon_config_ensure,
     path    => '/etc/newrelic/newrelic.cfg',
     content => template('newrelic/daemon/newrelic.cfg.erb'),
-    require => Exec['newrelic install'],
-  }
-
-  file { $purge_files:
-    ensure  => absent,
-    require => Exec['newrelic install']
+    require => Exec['newrelic_kill'],
   }
 
   # == Service only managed in external startup mode
