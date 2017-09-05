@@ -3,7 +3,8 @@ require 'spec_helper'
 describe 'newrelic::server::linux', :type => :class do
   let(:facts) do
     {
-      'os' => {
+      'path' => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/puppetlabs/bin:/snap/bin:/opt/puppetlabs/bin/',
+      'os'   => {
         'family'  => 'RedHat',
         'name'    => 'CentOS',
         'release' => {
