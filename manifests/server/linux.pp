@@ -42,6 +42,7 @@ class newrelic::server::linux (
   String                $package_ensure = 'present',
   Boolean               $service_enable = true,
   String                $service_ensure = 'running',
+  String                $exec_path      = $facts['path'],
   String                $logfile        = '/var/log/newrelic/nrsysmond.log',
   Variant[Undef,String] $log_level      = undef,
   Variant[Undef,String] $proxy          = undef,
@@ -71,8 +72,9 @@ class newrelic::server::linux (
   }
 
   exec { 'install_newrelic_license_key':
-    command => "/usr/sbin/nrsysmond-config --set license_key=${license_key}",
+    command => "touch /etc/newrelic/nrsysmond.cfg; /usr/sbin/nrsysmond-config --set license_key=${license_key}",
     user    => 'root',
+    path    => $exec_path,
     unless  => "/bin/grep -q ${license_key} /etc/newrelic/nrsysmond.cfg",
     notify  => Service[$service_name],
     require => Package[$package_name]
