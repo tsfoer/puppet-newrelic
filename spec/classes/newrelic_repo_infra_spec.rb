@@ -22,17 +22,15 @@ describe 'newrelic::repo::infra', :type => :class do
   context 'OS Family => Debian' do
     let(:facts) do
       {
-        'os' => {
+        'lsbdistcodename' => 'wheezy',
+        'osfamily'        => 'Debian',
+        'os'              => {
             'family'  => 'Debian',
             'name'    => 'Debian',
-            'distro'  => {
-              'codename' => 'wheezy'
-            },
             'release' => {
               'full' => '7.0'
             }
         },
-        'osfamily' => 'Debian',
      }
      end
 
