@@ -26,17 +26,6 @@ class newrelic::repo::infra {
     }
 
     'Debian': {
-
-      case $facts['os']['name'] {
-        'Ubuntu': {
-          $release = $facts['os']['lsb']['distcodename']
-        }
-
-        default: {
-          $release = $facts['os']['distro']['codename']
-        }
-      }
-
       $require = Apt::Source['newrelic-infra']
       ensure_packages('apt-transport-https')
       ::apt::source { 'newrelic-infra':
@@ -49,7 +38,6 @@ class newrelic::repo::infra {
         include  => {
           src => false,
         },
-        release  => $release,
         require  => Package['apt-transport-https'],
       }
     }
