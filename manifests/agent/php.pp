@@ -97,18 +97,19 @@
 #
 class newrelic::agent::php (
   String                   $license_key,
-  Boolean                  $manage_repo          = $::newrelic::params::manage_repo,
-  String                   $conf_dir             = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files          = $::newrelic::params::php_purge_files,
-  String                   $package_name         = $::newrelic::params::php_package_name,
-  String                   $daemon_service_name  = $::newrelic::params::php_service_name,
-  Array                    $extra_packages       = $::newrelic::params::php_extra_packages,
-  Hash                     $default_ini_settings = $::newrelic::params::php_default_ini_settings,
-  String                   $exec_path            = $facts['path'],
-  String                   $package_ensure       = 'present',
-  Enum['agent','external'] $startup_mode         = 'agent',
-  Hash                     $ini_settings         = {},
-  Hash                     $daemon_settings      = {},
+  Boolean                  $manage_repo             = $::newrelic::params::manage_repo,
+  String                   $conf_dir                = $::newrelic::params::php_conf_dir,
+  Array                    $purge_files             = $::newrelic::params::php_purge_files,
+  String                   $package_name            = $::newrelic::params::php_package_name,
+  String                   $daemon_service_name     = $::newrelic::params::php_service_name,
+  Array                    $extra_packages          = $::newrelic::params::php_extra_packages,
+  Hash                     $default_ini_settings    = $::newrelic::params::php_default_ini_settings,
+  Hash                     $default_daemon_settings = $::newrelic::params::php_default_daemon_settings,
+  String                   $exec_path               = $facts['path'],
+  String                   $package_ensure          = 'present',
+  Enum['agent','external'] $startup_mode            = 'agent',
+  Hash                     $ini_settings            = {},
+  Hash                     $daemon_settings         = {},
 ) inherits newrelic::params {
 
   if $startup_mode == 'agent' {
@@ -173,6 +174,8 @@ class newrelic::agent::php (
     content => template('newrelic/php/newrelic.ini.erb'),
     require => Exec['newrelic_kill'],
   }
+
+  $all_daemon_settings = deep_merge($default_daemon_settings,$daemon_settings)
 
   file { '/etc/newrelic/newrelic.cfg':
     ensure  => $daemon_config_ensure,
