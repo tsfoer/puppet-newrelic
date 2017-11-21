@@ -42,6 +42,12 @@
 #   Sockets in RedHat 7. Can be overridden using the ini_settings parameter.
 #   Default: OS dependant - see params.pp (Hash)
 #
+# [*default_daemon_settings*]
+#   Default settings to pass to newrelic.cfg - these are used to make
+#   OS-specific changes to the newrelic.cfg file, for example using Abstract
+#   Sockets in RedHat 7. Can be overridden using the daemon_settings parameter.
+#   Default: OS dependant - see params.pp (Hash)
+#
 # [*exec_path*]
 #   $PATH environment variable to pass to exec resources within this class,
 #   most noteably the NewRelic installer script. You may wish to override this
