@@ -42,6 +42,12 @@
 #   Sockets in RedHat 7. Can be overridden using the ini_settings parameter.
 #   Default: OS dependant - see params.pp (Hash)
 #
+# [*default_daemon_settings*]
+#   Default settings to pass to newrelic.cfg - these are used to make
+#   OS-specific changes to the newrelic.cfg file, for example using Abstract
+#   Sockets in RedHat 7. Can be overridden using the daemon_settings parameter.
+#   Default: OS dependant - see params.pp (Hash)
+#
 # [*exec_path*]
 #   $PATH environment variable to pass to exec resources within this class,
 #   most noteably the NewRelic installer script. You may wish to override this
@@ -97,18 +103,19 @@
 #
 class newrelic::agent::php (
   String                   $license_key,
-  Boolean                  $manage_repo          = $::newrelic::params::manage_repo,
-  String                   $conf_dir             = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files          = $::newrelic::params::php_purge_files,
-  String                   $package_name         = $::newrelic::params::php_package_name,
-  String                   $daemon_service_name  = $::newrelic::params::php_service_name,
-  Array                    $extra_packages       = $::newrelic::params::php_extra_packages,
-  Hash                     $default_ini_settings = $::newrelic::params::php_default_ini_settings,
-  String                   $exec_path            = $facts['path'],
-  String                   $package_ensure       = 'present',
-  Enum['agent','external'] $startup_mode         = 'agent',
-  Hash                     $ini_settings         = {},
-  Hash                     $daemon_settings      = {},
+  Boolean                  $manage_repo             = $::newrelic::params::manage_repo,
+  String                   $conf_dir                = $::newrelic::params::php_conf_dir,
+  Array                    $purge_files             = $::newrelic::params::php_purge_files,
+  String                   $package_name            = $::newrelic::params::php_package_name,
+  String                   $daemon_service_name     = $::newrelic::params::php_service_name,
+  Array                    $extra_packages          = $::newrelic::params::php_extra_packages,
+  Hash                     $default_ini_settings    = $::newrelic::params::php_default_ini_settings,
+  Hash                     $default_daemon_settings = $::newrelic::params::php_default_daemon_settings,
+  String                   $exec_path               = $facts['path'],
+  String                   $package_ensure          = 'present',
+  Enum['agent','external'] $startup_mode            = 'agent',
+  Hash                     $ini_settings            = {},
+  Hash                     $daemon_settings         = {},
 ) inherits newrelic::params {
 
   if $startup_mode == 'agent' {
@@ -173,6 +180,8 @@ class newrelic::agent::php (
     content => template('newrelic/php/newrelic.ini.erb'),
     require => Exec['newrelic_kill'],
   }
+
+  $all_daemon_settings = deep_merge($default_daemon_settings,$daemon_settings)
 
   file { '/etc/newrelic/newrelic.cfg':
     ensure  => $daemon_config_ensure,
