@@ -120,12 +120,8 @@ class newrelic::agent::php (
 
   if $startup_mode == 'agent' {
     $daemon_config_ensure = absent
-    $daemon_service_ensure = 'stopped'
-    $daemon_service_enable = false
   } else {
     $daemon_config_ensure = file
-    $daemon_service_ensure = 'running'
-    $daemon_service_enable = true
     File['/etc/newrelic/newrelic.cfg']{
       notify  => Service[$daemon_service_name],
     }
@@ -190,14 +186,16 @@ class newrelic::agent::php (
     require => Exec['newrelic_kill'],
   }
 
-  # == Service only managed in external startup mode
+  # == Service (only managed in external startup mode)
 
-  service { $daemon_service_name:
-    ensure     => $daemon_service_ensure,
-    enable     => $daemon_service_enable,
-    hasrestart => true,
-    hasstatus  => true,
-    require    => File['/etc/newrelic/newrelic.cfg'],
+  if $startup_mode == 'external' {
+    service { $daemon_service_name:
+      ensure     => 'running',
+      enable     => true,
+      hasrestart => true,
+      hasstatus  => true,
+      require    => File['/etc/newrelic/newrelic.cfg'],
+    }
   }
 
 }
