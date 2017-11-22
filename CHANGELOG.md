@@ -4,6 +4,10 @@ Release notes for the claranet/puppet-newrelic module.
 
 ------------------------------------------
 
+## 2.1.0 - 2017-11-22
+  * PHP Agent: Fixed a bug where the `newrelic-daemon` service would flap if the start-up mode was set to `agent` - [#13](https://github.com/claranet/puppet-newrelic/issues/13)
+  * PHP Agent: New parameter: `default_daemon_settings` for external start-up mode - [#12](https://github.com/claranet/puppet-newrelic/pull/12)
+
 ## 2.0.1 - 2017-10-04
   * Infra Repo: Apt module now handles setting `release` for Debian osfamily - [#11](https://github.com/claranet/puppet-newrelic/issues/11)
   * Linux Server: Exec now creates `/etc/newrelic/nrsysmond.cfg` before `nrsysmond-config` is run
