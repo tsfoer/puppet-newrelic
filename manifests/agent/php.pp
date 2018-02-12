@@ -15,12 +15,6 @@
 #   Main Configuration directory used for PHP.
 #   Default: OS dependant - see params.pp (String)
 #
-# [*purge_files*]
-#   Any files which should be purged following the installation. This is only
-#   necessary as the NewRelic installer adds files to every possible location,
-#   resulting in duplicate configuration.
-#   Default: OS dependant - see params.pp (Array)
-#
 # [*package_name*]
 #   Name of the package to install
 #   Default: OS dependant - see params.pp (String)
@@ -105,7 +99,6 @@ class newrelic::agent::php (
   String                   $license_key,
   Boolean                  $manage_repo             = $::newrelic::params::manage_repo,
   String                   $conf_dir                = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files             = $::newrelic::params::php_purge_files,
   String                   $package_name            = $::newrelic::params::php_package_name,
   String                   $daemon_service_name     = $::newrelic::params::php_service_name,
   Array                    $extra_packages          = $::newrelic::params::php_extra_packages,
@@ -163,11 +156,6 @@ class newrelic::agent::php (
   }
 
   # == Configuration
-
-  file { $purge_files:
-    ensure  => absent,
-    require => Exec['newrelic install']
-  }
 
   $all_ini_settings = deep_merge($default_ini_settings,$ini_settings)
 
