@@ -27,6 +27,7 @@ class newrelic::params {
       $php_service_name    = 'newrelic-daemon'
       $php_conf_dir        = '/etc/php.d'
       $php_extra_packages  = ['php-cli']
+      $run_installer       = true
 
       if $facts['os']['release']['major'] == '7' {
         # Abstract socket
@@ -52,6 +53,7 @@ class newrelic::params {
       $php_default_ini_settings    = {}
       $php_default_daemon_settings = {}
       $php_extra_packages          = []
+      $run_installer               = false
 
       if $facts['os']['release']['full'] == '16.04' {
         $php_conf_dir        = '/etc/php/7.0/mods-available'
