@@ -15,12 +15,6 @@
 #   Main Configuration directory used for PHP.
 #   Default: OS dependant - see params.pp (String)
 #
-# [*purge_files*]
-#   Any files which should be purged following the installation. This is only
-#   necessary as the NewRelic installer adds files to every possible location,
-#   resulting in duplicate configuration.
-#   Default: OS dependant - see params.pp (Array)
-#
 # [*package_name*]
 #   Name of the package to install
 #   Default: OS dependant - see params.pp (String)
@@ -47,6 +41,10 @@
 #   OS-specific changes to the newrelic.cfg file, for example using Abstract
 #   Sockets in RedHat 7. Can be overridden using the daemon_settings parameter.
 #   Default: OS dependant - see params.pp (Hash)
+#
+# [*run_installer*]
+#   Whether to run the newrelic installer.
+#   Default: OS dependant - see params.pp (Boolean)
 #
 # [*exec_path*]
 #   $PATH environment variable to pass to exec resources within this class,
@@ -105,12 +103,12 @@ class newrelic::agent::php (
   String                   $license_key,
   Boolean                  $manage_repo             = $::newrelic::params::manage_repo,
   String                   $conf_dir                = $::newrelic::params::php_conf_dir,
-  Array                    $purge_files             = $::newrelic::params::php_purge_files,
   String                   $package_name            = $::newrelic::params::php_package_name,
   String                   $daemon_service_name     = $::newrelic::params::php_service_name,
   Array                    $extra_packages          = $::newrelic::params::php_extra_packages,
   Hash                     $default_ini_settings    = $::newrelic::params::php_default_ini_settings,
   Hash                     $default_daemon_settings = $::newrelic::params::php_default_daemon_settings,
+  Boolean                  $run_installer           = $::newrelic::params::run_installer,
   String                   $exec_path               = $facts['path'],
   String                   $package_ensure          = 'present',
   Enum['agent','external'] $startup_mode            = 'agent',
@@ -146,13 +144,15 @@ class newrelic::agent::php (
 
   # == Initial Installation
 
-  exec { 'newrelic install':
-    command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
-    path    => $exec_path,
-    user    => 'root',
-    unless  => "/bin/grep -q ${license_key} ${conf_dir}/newrelic.ini",
-    notify  => Exec['newrelic_kill'],
-    require => Package[$package_name],
+  if ($run_installer) {
+    exec { 'newrelic install':
+      command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
+      path    => $exec_path,
+      user    => 'root',
+      unless  => "/bin/grep -q ${license_key} ${conf_dir}/newrelic.ini",
+      notify  => Exec['newrelic_kill'],
+      require => Package[$package_name],
+    }
   }
 
   exec { 'newrelic_kill':
@@ -163,11 +163,6 @@ class newrelic::agent::php (
   }
 
   # == Configuration
-
-  file { $purge_files:
-    ensure  => absent,
-    require => Exec['newrelic install']
-  }
 
   $all_ini_settings = deep_merge($default_ini_settings,$ini_settings)
 
