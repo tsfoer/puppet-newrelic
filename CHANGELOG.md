@@ -4,6 +4,10 @@ Release notes for the claranet/puppet-newrelic module.
 
 ------------------------------------------
 
+## 2.2.0 - 2018-03-20
+  * PHP Agent: Removed `purge_files` parameter and introduced a `run_installer` parameter (`true` on Debian only) to fix a duplicate files bug - [#16](https://github.com/claranet/puppet-newrelic/pull/16)
+  * Main class: Added `contain` statements to fix ordering of resources - [#17](https://github.com/claranet/puppet-newrelic/pull/17)
+
 ## 2.1.0 - 2017-11-22
   * PHP Agent: Fixed a bug where the `newrelic-daemon` service would flap if the start-up mode was set to `agent` - [#13](https://github.com/claranet/puppet-newrelic/issues/13)
   * PHP Agent: New parameter: `default_daemon_settings` for external start-up mode - [#12](https://github.com/claranet/puppet-newrelic/pull/12)
