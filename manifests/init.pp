@@ -60,32 +60,31 @@ class newrelic (
   }
 
   if $enable_infra == true {
-    contain ::newrelic::infra
     class { '::newrelic::infra':
       license_key => $license_key,
       manage_repo => $manage_repo,
     }
+    contain ::newrelic::infra
   }
 
   if $enable_server == true {
     if $facts['os']['family'] == 'Windows' {
       contain ::newrelic::server::windows
-      class { '::newrelic::server::windows': }
     } else {
-      contain ::newrelic::server::linux
       class { '::newrelic::server::linux':
         license_key => $license_key,
         manage_repo => $manage_repo,
       }
+      contain ::newrelic::server::linux
     }
   }
 
   if $enable_php_agent == true {
-    contain ::newrelic::agent::php
     class { '::newrelic::agent::php':
       license_key => $license_key,
       manage_repo => $manage_repo,
     }
+    contain ::newrelic::agent::php
   }
 
 
@@ -96,6 +95,5 @@ class newrelic (
 
   if $enable_dotnet_agent == true {
     contain ::newrelic::agent::dotnet
-    class { '::newrelic::agent::dotnet': }
   }
 }
