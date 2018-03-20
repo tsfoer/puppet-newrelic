@@ -60,6 +60,7 @@ class newrelic (
   }
 
   if $enable_infra == true {
+    contain ::newrelic::infra
     class { '::newrelic::infra':
       license_key => $license_key,
       manage_repo => $manage_repo,
@@ -68,8 +69,10 @@ class newrelic (
 
   if $enable_server == true {
     if $facts['os']['family'] == 'Windows' {
+      contain ::newrelic::server::windows
       class { '::newrelic::server::windows': }
     } else {
+      contain ::newrelic::server::linux
       class { '::newrelic::server::linux':
         license_key => $license_key,
         manage_repo => $manage_repo,
@@ -78,6 +81,7 @@ class newrelic (
   }
 
   if $enable_php_agent == true {
+    contain ::newrelic::agent::php
     class { '::newrelic::agent::php':
       license_key => $license_key,
       manage_repo => $manage_repo,
@@ -91,6 +95,7 @@ class newrelic (
   # == FIXME Untested below here
 
   if $enable_dotnet_agent == true {
+    contain ::newrelic::agent::dotnet
     class { '::newrelic::agent::dotnet': }
   }
 }
