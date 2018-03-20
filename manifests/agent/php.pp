@@ -144,7 +144,7 @@ class newrelic::agent::php (
 
   # == Initial Installation
 
-  if ($run_installer) {
+  if $run_installer == true {
     exec { 'newrelic install':
       command => "/usr/bin/newrelic-install purge; NR_INSTALL_SILENT=yes, NR_INSTALL_KEY=${license_key} /usr/bin/newrelic-install install",
       path    => $exec_path,
