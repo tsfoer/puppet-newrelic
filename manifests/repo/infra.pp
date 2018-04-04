@@ -29,7 +29,7 @@ class newrelic::repo::infra {
       $require = Apt::Source['newrelic-infra']
       ensure_packages('apt-transport-https')
       ::apt::source { 'newrelic-infra':
-        location => 'https://download.newrelic.com/infrastructure_agent/linux/apt',
+        location => '[arch=amd64] https://download.newrelic.com/infrastructure_agent/linux/apt/',
         repos    => 'main',
         key      => {
           id  => 'A758B3FBCD43BE8D123A3476BB29EE038ECCE87C',
