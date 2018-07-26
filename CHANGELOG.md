@@ -4,6 +4,9 @@ Release notes for the claranet/puppet-newrelic module.
 
 ------------------------------------------
 
+# 2.3.0 - 2018-07-26
+  * Infra Class: Added parameters to manage the service - [#19](https://github.com/claranet/puppet-newrelic/pull/19)
+
 ## 2.2.0 - 2018-03-20
   * PHP Agent: Removed `purge_files` parameter and introduced a `run_installer` parameter (`true` on Debian only) to fix a duplicate files bug - [#16](https://github.com/claranet/puppet-newrelic/pull/16)
   * Main class: Added `contain` statements to fix ordering of resources - [#17](https://github.com/claranet/puppet-newrelic/pull/17)
