@@ -12,6 +12,22 @@
 #   Whether to install the NewRelic OS repositories
 #   Default: Varies depending on OS (Boolean)
 #
+# [*manage_service*]
+#   Whether or not to manage the service as part of this module
+#   Default: true (Boolean)
+#
+# [*service_ensure*]
+#   State of the $service_name (newrelic-infra) service
+#   Default: running (String)
+#
+# [*service_name*]
+#   Name of the newrelic infra service
+#   Default: newrelic-infra (String)
+#
+# [*service_enable*]
+#   Whether to enable the service at boot
+#   Default: true (Boolean)
+#
 # === Authors
 #
 # Russell Whelan <russell.whelan@claranet.uk>
@@ -23,7 +39,11 @@
 #
 class newrelic::infra (
   String $license_key,
-  Boolean $manage_repo = $::newrelic::params::manage_repo,
+  Boolean $manage_repo    = $::newrelic::params::manage_repo,
+  Boolean $manage_service = true,
+  String  $service_ensure = 'running',
+  String  $service_name   = 'newrelic-infra',
+  Boolean $service_enable = true
 ) inherits newrelic::params {
 
   if $facts['os']['family'] == 'Windows' {
@@ -48,9 +68,12 @@ class newrelic::infra (
     require => File['/etc/newrelic-infra.yml'],
   }
 
-  service { 'newrelic-infra':
-    ensure  => running,
-    require => Package['newrelic-infra']
+  if $manage_service {
+    service { $service_name:
+      ensure  => $service_ensure,
+      name    => $service_name,
+      enable  => $service_enable,
+      require => Package['newrelic-infra']
+    }
   }
-
 }
