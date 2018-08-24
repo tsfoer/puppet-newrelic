@@ -54,7 +54,9 @@ class newrelic::agent::java (
 ){
 
   # == Package Installation
-  package{'unzip': ensure => installed}
+  package{'unzip':
+    ensure => installed
+  }
 
   # == Newrelic java agent fetch/installation
 
