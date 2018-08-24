@@ -5,6 +5,10 @@
 # Management of the JVM opts to make use of said agent are not supported
 # and must be managed by end users seperately
 #
+# Useful docs for reference
+# - https://docs.newrelic.com/docs/agents/java-agent/installation/install-java-agent
+# - https://docs.newrelic.com/docs/agents/java-agent/installation/include-java-agent-jvm-argument
+#
 # === Parameters:
 #
 # [*license_key*]
@@ -67,16 +71,14 @@ class newrelic::agent::java (
     onlyif  => "test ! -f ${install_dir}/newrelic-java-${package_version}.zip"
   }
   ~> exec{'unzip-newrelic-java-agent-zip':
-    path        => ['/usr/bin', '/usr/sbin'],
-    cwd         => $install_dir,
-    command     => "unzip ${install_dir}/newrelic-java-${package_version}.zip",
-    creates     => "${install_dir}/newrelic",
-    refreshonly => true
+    path    => ['/usr/bin', '/usr/sbin'],
+    cwd     => $install_dir,
+    command => "unzip ${install_dir}/newrelic-java-${package_version}.zip",
+    creates => "${install_dir}/newrelic"
   }
   ~> exec{'chown-newrelic-install-dir':
-    path        => ['/usr/bin', '/usr/sbin'],
-    command     => "chown -R ${agent_user}:${agent_group} ${install_dir}/newrelic",
-    refreshonly => true
+    path    => ['/usr/bin', '/usr/sbin'],
+    command => "chown -R ${agent_user}:${agent_group} ${install_dir}/newrelic"
   }
 
   # == Configuration

@@ -11,6 +11,9 @@
 1. [Setup - The basics of getting started with puppet-newrelic](#setup)
     * [What puppet-newrelic affects](#what-puppet-newrelic-affects)
     * [Beginning with puppet-newrelic](#beginning-with-registry)
+1. [Supported agents]
+    * [PHP](#php_agent)
+    * [Java](#java_agent)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development - Guide for contributing to the module](#development)
@@ -46,6 +49,7 @@ To install the (deprecated) NewRelic Server Monitoring agent instead of the defa
       enable_server => true,
     }
 
+<a name="php_agent"></a>
 To enable the PHP agent with default configuration:
 
     class { '::newrelic':
@@ -91,6 +95,23 @@ Assumes usage of the [Slashbunny PHP-FPM module](https://github.com/Slashbunny/p
       require      => Class['::phpfpm'],
       notify       => Class['::phpfpm::service'],
     }
+
+<a name="java_agent"></a>
+#### Java Agent
+
+Install newrelic java agent at specified version into an install directory. The install directory is recommended to be the newrelic/ under your app folder.
+Ensure permissions are correct on the install folder by using agent_user/agent_group.
+
+*Note: importantly. this does not handle passing newrelic.jar to JVM_OPTS etc. Please refer to NewRelic docs here - https://docs.newrelic.com/docs/agents/java-agent/installation/install-java-agent
+
+
+    class { '::newrelic::agent::java:
+      license_key  => '3522b44f4c3f89c8566d5781bac6e0bb7dedab7z'
+    }
+
+    # or use hiera and include
+    # newrelic::agent::java::license_key: '3522b44f4c3f89c8566d5781bac6e0bb7dedab7z'
+    include ::newrelic::agent::java
 
 ## Limitations
 
