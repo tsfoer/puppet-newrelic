@@ -70,17 +70,23 @@ class newrelic::agent::java (
     cwd     => $install_dir,
     command => "wget ${package_source_url}/${package_version}/newrelic-java-${package_version}.zip",
     creates => "${install_dir}/newrelic-java-${package_version}.zip",
-    onlyif  => "test ! -f ${install_dir}/newrelic-java-${package_version}.zip"
+    onlyif  => "test ! -f ${install_dir}/newrelic-java-${package_version}.zip",
+    notify  => Exec['unzip-newrelic-java-agent-zip']
   }
-  ~> exec{'unzip-newrelic-java-agent-zip':
-    path    => ['/usr/bin', '/usr/sbin'],
-    cwd     => $install_dir,
-    command => "unzip ${install_dir}/newrelic-java-${package_version}.zip",
-    creates => "${install_dir}/newrelic"
+
+  exec{'unzip-newrelic-java-agent-zip':
+    path        => ['/usr/bin', '/usr/sbin'],
+    cwd         => $install_dir,
+    command     => "unzip ${install_dir}/newrelic-java-${package_version}.zip",
+    creates     => "${install_dir}/newrelic",
+    notify      => Exec['chown-newrelic-install-dir'],
+    refreshonly => true
   }
-  ~> exec{'chown-newrelic-install-dir':
-    path    => ['/usr/bin', '/usr/sbin'],
-    command => "chown -R ${agent_user}:${agent_group} ${install_dir}/newrelic"
+
+  exec{'chown-newrelic-install-dir':
+    path        => ['/usr/bin', '/usr/sbin'],
+    command     => "chown -R ${agent_user}:${agent_group} ${install_dir}/newrelic",
+    refreshonly => true
   }
 
   # == Configuration
