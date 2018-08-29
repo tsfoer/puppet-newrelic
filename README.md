@@ -102,7 +102,7 @@ Assumes usage of the [Slashbunny PHP-FPM module](https://github.com/Slashbunny/p
 Install newrelic java agent at specified version into an install directory. The install directory is recommended to be the newrelic/ under your app folder.
 Ensure permissions are correct on the install folder by using agent_user/agent_group.
 
-*Note: importantly. this does not handle passing newrelic.jar to JVM_OPTS etc. Please refer to NewRelic docs here - https://docs.newrelic.com/docs/agents/java-agent/installation/install-java-agent
+**Note:** Importantly, this does not handle passing newrelic.jar to JVM_OPTS etc. Please refer to NewRelic docs here - https://docs.newrelic.com/docs/agents/java-agent/installation/install-java-agent
 
 
     class { '::newrelic::agent::java:
