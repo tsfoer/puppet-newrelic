@@ -4,6 +4,9 @@ Release notes for the claranet/puppet-newrelic module.
 
 ------------------------------------------
 
+# 2.4.1 - 2018-08-29
+  * The module is now compatible with the Puppet Development Kit, version 1.7.0 and above.
+
 # 2.4.0 - 2018-08-29
   * New Agent: Java! The module can now install and configure the NewRelic Java agent via the `::newrelic::agent::java` class
   * Massive thanks to [DaveHewey](https://github.com/DaveHewy) for PR [#20](https://github.com/claranet/puppet-newrelic/pull/19)
