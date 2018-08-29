@@ -27,14 +27,14 @@
 # For detailed explanation about the parameters below see: https://docs.newrelic.com/docs/php/php-agent-phpini-settings
 #
 class newrelic::agent::dotnet (
-  $newrelic_dotnet_package_ensure                        = 'present',
-  $newrelic_dotnet_conf_dir                              = $::newrelic::params::newrelic_dotnet_conf_dir,
-  $newrelic_dotnet_package                               = $::newrelic::params::newrelic_dotnet_package,
-  $newrelic_license_key                                  = undef,
-  $newrelic_daemon_cfgfile_ensure                        = 'present',
-  $temp_dir                                              = $::newrelic::params::temp_dir ,
-  $newrelic_dotnet_source                                = $::newrelic::params::newrelic_dotnet_source,
-  $newrelic_dotnet_application_name                      = $::newrelic::params::newrelic_dotnet_application_name,
+  $newrelic_dotnet_package_ensure   = 'present',
+  $newrelic_dotnet_conf_dir         = $::newrelic::params::newrelic_dotnet_conf_dir,
+  $newrelic_dotnet_package          = $::newrelic::params::newrelic_dotnet_package,
+  $newrelic_license_key             = undef,
+  $newrelic_daemon_cfgfile_ensure   = 'present',
+  $temp_dir                         = $::newrelic::params::temp_dir ,
+  $newrelic_dotnet_source           = $::newrelic::params::newrelic_dotnet_source,
+  $newrelic_dotnet_application_name = $::newrelic::params::newrelic_dotnet_application_name,
 ) inherits ::newrelic {
 
   if ! $newrelic_license_key {

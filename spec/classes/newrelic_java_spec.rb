@@ -17,13 +17,15 @@ describe 'newrelic::agent::java', :type => :class do
 
   let(:params) do
     {
-    :license_key => '1234567890qwerty',
-    :manage_config => true
+      :license_key => '1234567890qwerty',
+      :manage_config => true
     }
   end
 
   it { is_expected.to compile }
   it { should contain_package('unzip') }
   it { should contain_exec('wget-newrelic-java-agent')}
+  it { should contain_exec('chown-newrelic-install-dir')}
+  it { should contain_exec('unzip-newrelic-java-agent-zip')}
   it { should contain_file('/opt/newrelic/newrelic.yml')}
 end

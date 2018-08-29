@@ -43,7 +43,7 @@
 #   Default: true
 #
 class newrelic::agent::java (
-  String                                 $license_key,
+  String  $license_key,
   String  $package_source_url            = 'https://oss.sonatype.org/content/repositories/releases/com/newrelic/agent/java/newrelic-java/',
   String  $package_version               = '3.47.1',
   String  $install_dir                   = '/opt',
@@ -54,7 +54,7 @@ class newrelic::agent::java (
 ){
 
   # == Package Installation
-  package{'unzip':
+  package { 'unzip':
     ensure => installed
   }
 
@@ -65,7 +65,7 @@ class newrelic::agent::java (
   # The default $package_source_url set within the module is pointing
   # to the only useful/dependable place for the java agent.
   # This can be overriden with a private nexus url for example
-  exec{'wget-newrelic-java-agent':
+  exec { 'wget-newrelic-java-agent':
     path    => ['/usr/bin', '/usr/sbin'],
     cwd     => $install_dir,
     command => "wget ${package_source_url}/${package_version}/newrelic-java-${package_version}.zip",
@@ -74,7 +74,7 @@ class newrelic::agent::java (
     notify  => Exec['unzip-newrelic-java-agent-zip']
   }
 
-  exec{'unzip-newrelic-java-agent-zip':
+  exec { 'unzip-newrelic-java-agent-zip':
     path        => ['/usr/bin', '/usr/sbin'],
     cwd         => $install_dir,
     command     => "unzip ${install_dir}/newrelic-java-${package_version}.zip",
@@ -83,7 +83,7 @@ class newrelic::agent::java (
     refreshonly => true
   }
 
-  exec{'chown-newrelic-install-dir':
+  exec { 'chown-newrelic-install-dir':
     path        => ['/usr/bin', '/usr/sbin'],
     command     => "chown -R ${agent_user}:${agent_group} ${install_dir}/newrelic",
     refreshonly => true
@@ -94,7 +94,7 @@ class newrelic::agent::java (
   # manage the contents of the newrelic.yml or not
   # if managed only license_key + app_name + env app_names are overriden/supported by module overrides
   if $manage_config {
-    file{"${install_dir}/newrelic/newrelic.yml":
+    file { "${install_dir}/newrelic/newrelic.yml":
       ensure  => 'file',
       content => epp('newrelic/java/newrelic.yml.epp', {
         license_key               => $license_key,
