@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe 'newrelic::repo::infra', :type => :class do
-
+describe 'newrelic::repo::infra', type: :class do
   context 'OS Family => RedHat' do
     let(:facts) do
       {
@@ -9,14 +8,14 @@ describe 'newrelic::repo::infra', :type => :class do
           'family'  => 'RedHat',
           'name'    => 'CentOS',
           'release' => {
-            'major' => '7'
-          }
-        }
-     }
-     end
+            'major' => '7',
+          },
+        },
+      }
+    end
 
     it { is_expected.to compile }
-    it { should contain_yumrepo('newrelic-infra') }
+    it { is_expected.to contain_yumrepo('newrelic-infra') }
   end
 
   context 'OS Family => Debian' do
@@ -25,19 +24,17 @@ describe 'newrelic::repo::infra', :type => :class do
         'lsbdistcodename' => 'wheezy',
         'osfamily'        => 'Debian',
         'os'              => {
-            'family'  => 'Debian',
-            'name'    => 'Debian',
-            'release' => {
-              'full' => '7.0'
-            }
+          'family' => 'Debian',
+          'name'    => 'Debian',
+          'release' => {
+            'full' => '7.0',
+          },
         },
-     }
-     end
+      }
+    end
 
     it { is_expected.to compile }
-    it { should contain_apt__source('newrelic-infra') }
-    it { should contain_package('apt-transport-https') }
+    it { is_expected.to contain_apt__source('newrelic-infra') }
+    it { is_expected.to contain_package('apt-transport-https') }
   end
-
-
 end

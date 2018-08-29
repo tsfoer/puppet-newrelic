@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe 'newrelic::repo::legacy', :type => :class do
-
+describe 'newrelic::repo::legacy', type: :class do
   context 'OS Family => Redhat' do
     let(:facts) do
       {
@@ -9,33 +8,32 @@ describe 'newrelic::repo::legacy', :type => :class do
           'family'  => 'RedHat',
           'name'    => 'CentOS',
           'release' => {
-            'major' => '7'
-          }
-        }
+            'major' => '7',
+          },
+        },
       }
     end
 
     it { is_expected.to compile }
-    it { should contain_package('newrelic-repo-5-3.noarch') }
+    it { is_expected.to contain_package('newrelic-repo-5-3.noarch') }
   end
 
   context 'OS Family => Debian' do
     let(:facts) do
       {
         'os' => {
-            'family'  => 'Debian',
-            'name'    => 'Debian',
-            'release' => {
-              'full' => '7.0'
-            }
+          'family' => 'Debian',
+          'name'    => 'Debian',
+          'release' => {
+            'full' => '7.0',
+          },
         },
         'osfamily' => 'Debian',
-        'lsbdistcodename' => 'wheezy'
-     }
-     end
+        'lsbdistcodename' => 'wheezy',
+      }
+    end
 
     it { is_expected.to compile }
-    it { should contain_apt__source('newrelic') }
+    it { is_expected.to contain_apt__source('newrelic') }
   end
-
 end
