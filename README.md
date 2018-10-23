@@ -4,10 +4,9 @@
 [![Puppet Forge](http://img.shields.io/puppetforge/v/claranet/newrelic.svg)](https://forge.puppetlabs.com/claranet/newrelic)
 [![Forge Downloads](https://img.shields.io/puppetforge/dt/claranet/newrelic.svg)](https://forge.puppetlabs.com/claranet/newrelic)
 
-## Table of Contents
+#### Table of Contents
 
-1. [Overview - What is the puppet-newrelic module?](#overview)
-    * [Puppet 3 Support](#puppet-3-support)
+1. [Description - What is the puppet-newrelic module?](#description)
 1. [Setup - The basics of getting started with puppet-newrelic](#setup)
     * [What puppet-newrelic affects](#what-puppet-newrelic-affects)
     * [Beginning with puppet-newrelic](#beginning-with-registry)
@@ -17,15 +16,15 @@
     * [PHP](#php)
     * [Java](#java)
 1. [Limitations - OS compatibility, etc.](#limitations)
+    * [Supported Operating Systems](#supported-operating-systems)
+    * [Puppet 3](#puppet-3)
+    * [Server to Infra Migrations](#server-to-infra-migrations)
+    * [Windows](#windows)
 1. [Development - Guide for contributing to the module](#development)
 
-## Overview
+## Description
 
 This module manages and installs the New Relic Server Monitoring and PHP agents and is based on Felipe Salum's [puppet-newrelic](https://github.com/fsalum/puppet-newrelic) module.
-
-### Puppet 3 Support
-
-On 31st December 2016, support for Puppet 3.x was withdrawn. As as a result, **this module does not support Puppet 3**.
 
 ## Setup
 
@@ -36,7 +35,9 @@ On 31st December 2016, support for Puppet 3.x was withdrawn. As as a result, **t
 
 ### Beginning with puppet-newrelic
 
-By default, the module installs and configures the [NewRelic Infrastructure agent](https://docs.newrelic.com/docs/infrastructure/new-relic-infrastructure/installation/install-infrastructure-linux).
+To use the module in its default form, which will install the NewRelic Infra agent:
+
+    include ::newrelic
 
 ## Usage
 
@@ -111,16 +112,22 @@ This module installs a specified version of the the NewRelic Java agent into an 
 
 ## Limitations
 
-When moving from NewRelic Server to NewRelic Infrastructure - the module only installs the new client, and does not clean up the old one.
-
-### Windows Support
-
-Please note that Windows support is currently **untested**.
-
 ### Supported Operating Systems
 
 * Debian/Ubuntu
 * CentOS/RHEL
+
+### Puppet 3
+
+On 31st December 2016, support for Puppet 3.x was withdrawn. As as a result, **this module does not support Puppet 3**.
+
+### Server to Infra Migrations
+
+When moving from NewRelic Server to NewRelic Infrastructure - the module only installs the new client, and does not clean up the old one.
+
+### Windows
+
+Please note that Windows support is currently **untested**.
 
 ## Development
 
