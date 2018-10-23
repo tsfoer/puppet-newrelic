@@ -1,6 +1,6 @@
 {
   "name": "claranet-newrelic",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "author": "Claranet",
   "summary": "Puppet module for NewRelic",
   "license": "Apache-2.0",
@@ -47,7 +47,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.0.0"
+      "version_requirement": ">= 4.0.0 < 7.0.0"
     }
   ],
   "description": "Module to install and configure New Relic server monitoring and New Relic PHP Agent",

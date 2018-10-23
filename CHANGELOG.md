@@ -4,6 +4,10 @@ Release notes for the claranet/puppet-newrelic module.
 
 ------------------------------------------
 
+# 2.4.2 - 2018-10-23
+  * PHP Agent: Added support for Debian 9 natively using PHP7 - [#21](https://github.com/claranet/puppet-newrelic/pull/19)
+  * Metadata: Adding upper bound to Puppet version support
+
 # 2.4.1 - 2018-08-29
   * The module is now compatible with the Puppet Development Kit, version 1.7.0 and above.
 
