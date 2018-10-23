@@ -55,10 +55,9 @@ class newrelic::params {
       $php_extra_packages          = []
       $run_installer               = false
 
-      if $facts['os']['release']['full'] == '16.04' {
-        $php_conf_dir        = '/etc/php/7.0/mods-available'
-      } else {
-        $php_conf_dir        = '/etc/php5/mods-available'
+      case $facts['os']['distro']['codename'] {
+        'xenial','stretch': { $php_conf_dir = '/etc/php/7.0/mods-available' }
+        default:            { $php_conf_dir = '/etc/php5/mods-available' }
       }
     }
 
