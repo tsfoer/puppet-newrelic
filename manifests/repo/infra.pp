@@ -30,6 +30,7 @@ class newrelic::repo::infra {
       ::apt::source { 'newrelic-infra':
         location => '[arch=amd64] https://download.newrelic.com/infrastructure_agent/linux/apt/',
         repos    => 'main',
+        release  => 'bionic',
         key      => {
           id  => 'A758B3FBCD43BE8D123A3476BB29EE038ECCE87C',
           key => 'https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg',
