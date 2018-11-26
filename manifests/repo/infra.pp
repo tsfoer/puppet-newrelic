@@ -27,7 +27,7 @@ class newrelic::repo::infra {
 
     'Debian': {
       $require = Apt::Source['newrelic-infra']
-      ensure_packages('apt-transport-https')
+      #ensure_packages('apt-transport-https')
       ::apt::source { 'newrelic-infra':
         location => '[arch=amd64] https://download.newrelic.com/infrastructure_agent/linux/apt/',
         repos    => 'main',
